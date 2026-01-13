@@ -68,7 +68,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 $e instanceof QueryException =>
                 ApiResponse::error('Database error: ' . $e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR),
 
-                default => ApiResponse::error('An unexpected error occurred.', Response::HTTP_INTERNAL_SERVER_ERROR),
+                default => ApiResponse::error(
+                    'An unexpected error occurred: ' . $e->getMessage(),
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                ),
             };
         });
     })->create();
