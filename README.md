@@ -144,3 +144,8 @@ php artisan test
 * Structured responses ensure maintainable and observable API behavior.
 
 This design prioritizes **separation of concerns, maintainability, and testability** while ensuring all domain rules are strictly enforced.
+
+
+## Postman Documentation
+```
+https://documenter.getpostman.com/view/6235120/2sBXVhBpoX
