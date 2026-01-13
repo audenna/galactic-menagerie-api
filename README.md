@@ -107,15 +107,7 @@ This project uses a **Service-Repository-DTO** pattern to ensure clean separatio
 | Method | Endpoint                 | Description                             |
 | ------ | ------------------------ | --------------------------------------- |
 | POST   | `/enclosures`            | Create an enclosure                     |
-| GET    | `/enclosures`            | List enclosures                         |
-| GET    | `/enclosures/{id}`       | Retrieve an enclosure                   |
-| PUT    | `/enclosures/{id}`       | Update an enclosure                     |
-| DELETE | `/enclosures/{id}`       | Delete an enclosure                     |
 | POST   | `/animals`               | Create an animal                        |
-| GET    | `/animals`               | List animals                            |
-| GET    | `/animals/{id}`          | Retrieve an animal                      |
-| PUT    | `/animals/{id}`          | Update an animal                        |
-| DELETE | `/animals/{id}`          | Delete an animal                        |
 | POST   | `/animals/{id}/transfer` | Transfer an animal to another enclosure |
 
 ---
