@@ -1,66 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Galactic Menagerie API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 11 JSON API for managing alien wildlife enclosures and animals. This API enforces business rules to ensure species are placed in compatible environments and enclosures are never over capacity.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* [Installation](#installation)
+* [Running the Application](#running-the-application)
+* [Architecture & Design Decisions](#architecture--design-decisions)
+* [API Endpoints](#api-endpoints)
+* [Business Rules](#business-rules)
+* [Testing](#testing)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Prerequisites
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* PHP 8.2+
+* Composer
+* SQLite (or any other supported database)
+* Node.js & NPM (for Vue 3 frontend, optional)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Setup
 
-## Laravel Sponsors
+1. Clone the repository:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <repository_url>
+cd galactic-menagerie-api
+```
 
-### Premium Partners
+2. Install PHP dependencies:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```bash
+composer install
+```
 
-## Contributing
+3. Set up environment variables:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Code of Conduct
+4. Configure SQLite (or another DB) in `.env`:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```env
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database.sqlite
+```
 
-## Security Vulnerabilities
+5. Run migrations:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan migrate
+```
 
-## License
+6. (Optional) Seed data:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan db:seed
+```
+
+7. Start the application:
+
+```bash
+php artisan serve
+```
+
+The API will now be available at `http://127.0.0.1:8000`.
+
+---
+
+## Architecture & Design Decisions
+
+This project uses a **Service-Repository-DTO** pattern to ensure clean separation of concerns and maintainable, testable code.
+
+### Key Decisions
+
+* **Service Layer:**
+  All business logic, including transfer rules and validation, is handled in `AnimalService` and `EnclosureService`.
+
+    * Example: The `transfer` method ensures both the target environment and enclosure capacity are valid before moving an animal.
+
+* **Repository Pattern:**
+  Encapsulates database operations.
+
+    * `AnimalRepository` and `EnclosureRepository` handle all persistence, including enum normalization and DB transactions.
+
+* **DTOs (Data Transfer Objects):**
+  Requests are converted into typed DTOs (`CreateAnimalDTO`, `TransferAnimalDTO`) for type safety and clarity in services.
+
+* **Enums:**
+  `EnvironmentType` ensures only valid environments are used and eliminates string errors.
+
+* **Custom Validation Rules:**
+  `ValidateNameRule` enforces proper naming conventions, ensuring names are human-readable and within length constraints.
+
+* **Centralized Logging:**
+  `DomainLogger` captures domain-level events and business rule violations for auditability.
+
+* **Reusable API Response:**
+  `ApiResponse` standardizes JSON responses across all endpoints.
+
+* **Error Handling:**
+  Domain-specific exceptions (`EnclosureCapacityExceededException`, `InvalidEnvironmentException`) provide meaningful feedback with proper HTTP codes.
+
+---
+
+## API Endpoints
+
+| Method | Endpoint                 | Description                             |
+| ------ | ------------------------ | --------------------------------------- |
+| POST   | `/enclosures`            | Create an enclosure                     |
+| GET    | `/enclosures`            | List enclosures                         |
+| GET    | `/enclosures/{id}`       | Retrieve an enclosure                   |
+| PUT    | `/enclosures/{id}`       | Update an enclosure                     |
+| DELETE | `/enclosures/{id}`       | Delete an enclosure                     |
+| POST   | `/animals`               | Create an animal                        |
+| GET    | `/animals`               | List animals                            |
+| GET    | `/animals/{id}`          | Retrieve an animal                      |
+| PUT    | `/animals/{id}`          | Update an animal                        |
+| DELETE | `/animals/{id}`          | Delete an animal                        |
+| POST   | `/animals/{id}/transfer` | Transfer an animal to another enclosure |
+
+---
+
+## Business Rules
+
+1. **Survival Rule:** An animal cannot be placed in an enclosure if the enclosure type does not match its preferred environment.
+2. **Capacity Rule:** An animal cannot be added to an enclosure if it is already at maximum capacity.
+3. **Transfer Rule:** Moving an animal validates both the survival and capacity rules.
+
+---
+
+## Testing
+
+Feature tests are included to cover:
+
+* Animal creation
+* Enclosure creation
+* Transfer success
+* Transfers violating survival or capacity rules
+
+Run tests using:
+
+```bash
+php artisan test
+```
+
+---
+
+## Notes
+
+* Enums are used for environment types to enforce domain integrity.
+* All business logic resides in services to keep controllers thin.
+* Repositories handle DB normalization (e.g., enum → string).
+* Logging and structured responses ensure maintainable and observable API behavior.
+
+This design prioritizes **separation of concerns, maintainability, and testability** while ensuring all domain rules are strictly enforced.
