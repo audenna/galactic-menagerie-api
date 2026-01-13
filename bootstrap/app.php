@@ -43,8 +43,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // Append custom middleware classes here
-        $middleware->append(EnsureAcceptsJson::class);
-        $middleware->append(EnsureContentTypeJson::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {

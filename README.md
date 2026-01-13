@@ -65,6 +65,20 @@ php artisan migrate
 php artisan serve
 ```
 
+### Frontend Setup
+
+7. Install Node dependencies:
+
+```bash
+npm install
+```
+
+8. Install Node dependencies:
+
+```bash
+npm run dev
+```
+
 The API will now be available at `http://127.0.0.1:8000`.
 
 ---
