@@ -29,7 +29,7 @@ A Laravel 11 JSON API for managing alien wildlife enclosures and animals. This A
 1. Clone the repository:
 
 ```bash
-git clone <repository_url>
+git clone https://github.com/audenna/galactic-menagerie-api.git
 cd galactic-menagerie-api
 ```
 
@@ -59,13 +59,7 @@ DB_DATABASE=/absolute/path/to/database.sqlite
 php artisan migrate
 ```
 
-6. (Optional) Seed data:
-
-```bash
-php artisan db:seed
-```
-
-7. Start the application:
+6. Start the application:
 
 ```bash
 php artisan serve
@@ -89,13 +83,10 @@ This project uses a **Service-Repository-DTO** pattern to ensure clean separatio
 * **Repository Pattern:**
   Encapsulates database operations.
 
-    * `AnimalRepository` and `EnclosureRepository` handle all persistence, including enum normalization and DB transactions.
+    * `AnimalRepository` and `EnclosureRepository` handle all persistence, and DB transactions.
 
 * **DTOs (Data Transfer Objects):**
   Requests are converted into typed DTOs (`CreateAnimalDTO`, `TransferAnimalDTO`) for type safety and clarity in services.
-
-* **Enums:**
-  `EnvironmentType` ensures only valid environments are used and eliminates string errors.
 
 * **Custom Validation Rules:**
   `ValidateNameRule` enforces proper naming conventions, ensuring names are human-readable and within length constraints.
@@ -156,9 +147,8 @@ php artisan test
 
 ## Notes
 
-* Enums are used for environment types to enforce domain integrity.
 * All business logic resides in services to keep controllers thin.
-* Repositories handle DB normalization (e.g., enum → string).
+* Repositories handle DB normalization
 * Logging and structured responses ensure maintainable and observable API behavior.
 
 This design prioritizes **separation of concerns, maintainability, and testability** while ensuring all domain rules are strictly enforced.
