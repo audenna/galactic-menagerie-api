@@ -141,6 +141,6 @@ php artisan test
 
 * All business logic resides in services to keep controllers thin.
 * Repositories handle DB normalization
-* Logging and structured responses ensure maintainable and observable API behavior.
+* Structured responses ensure maintainable and observable API behavior.
 
 This design prioritizes **separation of concerns, maintainability, and testability** while ensuring all domain rules are strictly enforced.
