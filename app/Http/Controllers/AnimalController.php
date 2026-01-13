@@ -17,26 +17,20 @@ class AnimalController extends Controller
 
     public function store(StoreAnimalRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $dto = new CreateAnimalDTO(
-            name: $validated['name'],
-            species: $validated['species'],
-            preferred_environment: $validated['preferred_environment'],
-            enclosure_id: $validated['enclosure_id'],
-        );
+        $dto = CreateAnimalDTO::fromRequest($request->validated());
 
         $enclosure = $this->service->create($dto);
 
-        return ApiResponse::success($enclosure, ResponseAlias::HTTP_CREATED);
+        return ApiResponse::success(
+            $enclosure,
+            ResponseAlias::HTTP_CREATED,
+            'A new animal has been created successfully'
+        );
     }
 
-    public function transfer(TransferAnimalRequest $request, int $animalId)
+    public function transfer(TransferAnimalRequest $request, int $animal_id)
     {
-        $dto = new TransferAnimalDTO(
-            animal_id: $animalId,
-            target_enclosure_id: $request->validated('target_enclosure_id')
-        );
+        $dto = TransferAnimalDTO::fromRequest($animal_id, $request->validated());
 
         $animal = $this->service->transfer($dto);
 

@@ -15,16 +15,14 @@ class EnclosureController extends Controller
 
     public function store(StoreEnclosureRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        $dto = new CreateEnclosureDTO(
-            name: $validated['name'],
-            type: $validated['type'],
-            capacity: $validated['capacity'],
-        );
+        $dto = CreateEnclosureDTO::fromRequest($request->validated());
 
         $enclosure = $this->service->create($dto);
 
-        return ApiResponse::success($enclosure, ResponseAlias::HTTP_CREATED);
+        return ApiResponse::success(
+            $enclosure,
+            ResponseAlias::HTTP_CREATED,
+            'Enclosure created successfully'
+        );
     }
 }

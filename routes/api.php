@@ -12,5 +12,6 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('animals')->group(function () {
         Route::post('/', [AnimalController::class, 'store']);
+        Route::post('/{animal_id}/transfer', [AnimalController::class, 'transfer']);
     });
 });

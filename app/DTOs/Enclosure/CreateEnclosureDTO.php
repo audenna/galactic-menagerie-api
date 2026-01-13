@@ -9,4 +9,13 @@ readonly class CreateEnclosureDTO
         public string $type,
         public int $capacity
     ) {}
+
+    public static function fromRequest(array $validated): self
+    {
+        return new self(
+            name: $validated['name'],
+            type: $validated['type'],
+            capacity: $validated['capacity']
+        );
+    }
 }
