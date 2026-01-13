@@ -49,10 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             return match (true) {
-                $e instanceof EnclosureCapacityExceededException, $e instanceof AnimalAlreadyInTargetEnclosureException =>
-                ApiResponse::error($e->getMessage(), Response::HTTP_CONFLICT),
-
-                $e instanceof InvalidEnvironmentException =>
+                $e instanceof EnclosureCapacityExceededException, $e instanceof AnimalAlreadyInTargetEnclosureException, $e instanceof InvalidEnvironmentException =>
                 ApiResponse::error($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY),
 
                 $e instanceof ModelNotFoundException =>

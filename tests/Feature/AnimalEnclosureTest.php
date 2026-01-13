@@ -29,7 +29,7 @@ class AnimalEnclosureTest extends TestCase
                 'capacity' => 5,
             ]);
 
-        $this->assertDatabaseHas('enclosures', ['name' => strtolower($name)]);
+        $this->assertDatabaseHas('enclosures', ['name' => $name]);
     }
 
     public function test_it_rejects_enclosure_with_invalid_capacity(): void
@@ -40,24 +40,169 @@ class AnimalEnclosureTest extends TestCase
             'capacity' => 0,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable(); // 422
     }
 
     public function test_it_can_create_an_animal_in_valid_enclosure(): void
     {
-        $name = 'Fuzzy Alien';
+        $name = 'Simba';
         $enclosure = Enclosure::factory()->create();
 
         $response = $this->postJson("$this->baseUrl/animals", [
             'name' => $name,
-            'species' => 'Flufficorn',
-            'preferred_environment' => 'Jungle',
+            'species' => 'Tiger',
+            'preferred_environment' => $enclosure->type,
             'enclosure_id' => $enclosure->id,
         ]);
 
-        $response->assertStatus(201)
+        $response->assertCreated()
             ->assertJsonFragment(['name' => $name]);
 
-        $this->assertDatabaseHas('animals', ['name' => strtolower($name)]);
+        $this->assertDatabaseHas('animals', ['name' => $name]);
+    }
+
+    public function test_it_rejects_animal_in_wrong_environment(): void
+    {
+        $name = 'Hot Crab';
+        $enclosure = Enclosure::factory()->create([
+            'type' => 'Tundra',
+            'capacity' => 2,
+        ]);
+
+        $response = $this->postJson("$this->baseUrl/animals", [
+            'name' => $name,
+            'species' => 'Magma-Crab',
+            'preferred_environment' => 'Volcanics',
+            'enclosure_id' => $enclosure->id,
+        ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonFragment([
+                'message' => 'Animal cannot survive in this enclosure environment.'
+            ]);
+
+        $this->assertDatabaseMissing('animals', ['name' => $name]);
+    }
+
+    public function test_it_rejects_animal_if_enclosure_is_full(): void
+    {
+        $enclosure = Enclosure::factory()->create(['capacity' => 1]);
+
+        // Fill the enclosure
+        Animal::factory()->create([
+            'enclosure_id' => $enclosure->id,
+            'preferred_environment' => $enclosure->type,
+        ]);
+
+        $response = $this->postJson("$this->baseUrl/animals", [
+            'name' => 'Second Alien',
+            'species' => 'Leafy',
+            'preferred_environment' => $enclosure->type,
+            'enclosure_id' => $enclosure->id,
+        ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonFragment([
+                'message' => 'Enclosure has reached its maximum capacity.'
+            ]);
+    }
+
+    public function test_it_can_transfer_animal_to_valid_enclosure(): void
+    {
+        $source = Enclosure::factory()->create([
+            'type' => 'Jungle',
+            'capacity' => 2,
+        ]);
+
+        $target = Enclosure::factory()->create([
+            'type' => 'Jungle',
+            'capacity' => 2,
+        ]);
+
+        $animal = Animal::factory()->create([
+            'enclosure_id' => $source->id,
+            'preferred_environment' => 'Jungle',
+        ]);
+
+        $response = $this->postJson("$this->baseUrl/animals/{$animal->id}/transfer", [
+            'target_enclosure_id' => $target->id,
+        ]);
+
+        $response->assertOk()
+            ->assertJsonFragment(['enclosure_id' => $target->id]);
+
+        $this->assertDatabaseHas('animals', [
+            'id' => $animal->id,
+            'enclosure_id' => $target->id,
+        ]);
+    }
+
+    public function test_it_rejects_transfer_to_wrong_environment(): void
+    {
+        $source = Enclosure::factory()->create([
+            'type' => 'Volcanic',
+            'capacity' => 2,
+        ]);
+
+        $target = Enclosure::factory()->create([
+            'type' => 'Tundra',
+            'capacity' => 2,
+        ]);
+
+        $animal = Animal::factory()->create([
+            'enclosure_id' => $source->id,
+            'preferred_environment' => 'Volcanic',
+        ]);
+
+        $response = $this->postJson("$this->baseUrl/animals/{$animal->id}/transfer", [
+            'target_enclosure_id' => $target->id,
+        ]);
+
+        $response->assertUnprocessable() // 422
+            ->assertJsonFragment([
+                'message' => 'Animal cannot survive in this enclosure environment.'
+            ]);
+
+        $this->assertDatabaseHas('animals', [
+            'id' => $animal->id,
+            'enclosure_id' => $source->id,
+        ]);
+    }
+
+    public function test_it_rejects_transfer_if_target_is_full(): void
+    {
+        $source = Enclosure::factory()->create([
+            'type' => 'Jungle',
+            'capacity' => 2,
+        ]);
+
+        $target = Enclosure::factory()->create([
+            'type' => 'Jungle',
+            'capacity' => 1,
+        ]);
+
+        Animal::factory()->create([
+            'enclosure_id' => $target->id,
+            'preferred_environment' => 'Jungle',
+        ]);
+
+        $animal = Animal::factory()->create([
+            'enclosure_id' => $source->id,
+            'preferred_environment' => 'Jungle',
+        ]);
+
+        $response = $this->postJson("$this->baseUrl/animals/{$animal->id}/transfer", [
+            'target_enclosure_id' => $target->id,
+        ]);
+
+        $response->assertUnprocessable() // 422
+            ->assertJsonFragment([
+                'message' => 'Enclosure has reached its maximum capacity.'
+            ]);
+
+        $this->assertDatabaseHas('animals', [
+            'id' => $animal->id,
+            'enclosure_id' => $source->id,
+        ]);
     }
 }

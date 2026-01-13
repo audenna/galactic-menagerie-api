@@ -12,12 +12,11 @@ use App\Models\Enclosure;
 use App\Repositories\Animal\AnimalRepositoryInterface;
 use App\Repositories\Enclosure\EnclosureRepositoryInterface;
 use Illuminate\Support\Facades\DB;
-use Throwable;
 
 readonly class AnimalService
 {
     public function __construct(
-        private AnimalRepositoryInterface    $animalRepo,
+        private AnimalRepositoryInterface $animalRepo,
         private EnclosureRepositoryInterface $enclosureRepo
     ) {}
 
