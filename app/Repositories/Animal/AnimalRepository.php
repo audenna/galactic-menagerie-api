@@ -22,8 +22,6 @@ class AnimalRepository extends EloquentBaseRepository implements AnimalRepositor
 
     public function countByEnclosure(int $enclosureId): int
     {
-        return $this->model
-            ->where('enclosure_id', $enclosureId)
-            ->count();
+        return $this->model->where('enclosure_id', $enclosureId)->count();
     }
 }
