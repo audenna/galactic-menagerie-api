@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Logging\DomainLogger;
 use App\Responses\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ class EnsureContentTypeJson
         // Only validate for methods that typically have a body
         if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'])) {
             $contentType = $request->headers->get('Content-Type', '');
+
+            DomainLogger::info("Content type recieved: $contentType");
 
             if (empty($contentType) || ! str_contains($contentType, 'application/json')) {
                 return ApiResponse::error(
