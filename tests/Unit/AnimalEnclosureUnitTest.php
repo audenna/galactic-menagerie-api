@@ -7,7 +7,7 @@ use App\Models\Enclosure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class EnclosureTest extends TestCase
+class AnimalEnclosureUnitTest extends TestCase
 {
     use RefreshDatabase;
 
