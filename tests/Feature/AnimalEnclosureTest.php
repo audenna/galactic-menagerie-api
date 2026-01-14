@@ -88,7 +88,6 @@ class AnimalEnclosureTest extends TestCase
     {
         $enclosure = Enclosure::factory()->create(['capacity' => 1]);
 
-        // Fill the enclosure
         Animal::factory()->create([
             'enclosure_id' => $enclosure->id,
             'preferred_environment' => $enclosure->type,
