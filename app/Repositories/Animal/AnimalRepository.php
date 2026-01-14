@@ -12,18 +12,6 @@ class AnimalRepository extends EloquentBaseRepository implements AnimalRepositor
         $this->model = $model;
     }
 
-    public function findOrFail(int $id): Animal
-    {
-        /** @var Animal */
-        return parent::findOrFail($id);
-    }
-
-    public function create(array $attributes): Animal
-    {
-        /** @var Animal */
-        return parent::create($attributes);
-    }
-
     public function moveToEnclosure(Animal $animal, int $enclosureId): Animal
     {
         $animal->enclosure_id = $enclosureId;

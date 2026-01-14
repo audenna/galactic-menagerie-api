@@ -20,6 +20,9 @@ readonly class AnimalService
         private EnclosureRepositoryInterface $enclosureRepo
     ) {}
 
+    /**
+     * @throws \Throwable
+     */
     public function create(CreateAnimalDTO $dto): Animal
     {
         return DB::transaction(function () use ($dto) {
@@ -42,6 +45,9 @@ readonly class AnimalService
         });
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function transfer(TransferAnimalDTO $dto): Animal
     {
         return DB::transaction(function () use ($dto) {
