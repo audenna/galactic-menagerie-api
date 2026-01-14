@@ -12,6 +12,7 @@ use App\Models\Enclosure;
 use App\Repositories\Animal\AnimalRepositoryInterface;
 use App\Repositories\Enclosure\EnclosureRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use App\Logging\DomainLogger;
 
 readonly class AnimalService
 {
@@ -25,23 +26,24 @@ readonly class AnimalService
      */
     public function create(CreateAnimalDTO $dto): Animal
     {
+        DomainLogger::alert("Creating animal...", (array) $dto);
         return DB::transaction(function () use ($dto) {
             /** @var Enclosure $enclosure */
             $enclosure = $this->enclosureRepo->findOrFail($dto->enclosure_id);
 
-            $this->assertEnvironmentCompatible(
-                $dto->preferred_environment,
-                $enclosure
-            );
-
+            $this->assertEnvironmentCompatible($dto->preferred_environment, $enclosure);
             $this->assertEnclosureHasCapacity($enclosure);
 
-            return $this->animalRepo->create([
+            $animal = $this->animalRepo->create([
                 'name' => $dto->name,
                 'species' => $dto->species,
                 'preferred_environment' => $dto->preferred_environment,
                 'enclosure_id' => $dto->enclosure_id,
             ]);
+
+            DomainLogger::alert('Animal created', (array) $animal);
+
+            return $animal;
         });
     }
 
@@ -50,6 +52,7 @@ readonly class AnimalService
      */
     public function transfer(TransferAnimalDTO $dto): Animal
     {
+        DomainLogger::alert("Transferring animal...", (array) $dto);
         return DB::transaction(function () use ($dto) {
             /** @var Animal $animal */
             $animal = $this->animalRepo->lockAndFindOrFail($dto->animal_id);
@@ -61,14 +64,14 @@ readonly class AnimalService
                 throw new AnimalAlreadyInTargetEnclosureException();
             }
 
-            $this->assertEnvironmentCompatible(
-                $animal->preferred_environment,
-                $target
-            );
-
+            $this->assertEnvironmentCompatible($animal->preferred_environment, $target);
             $this->assertEnclosureHasCapacity($target);
 
-            return $this->animalRepo->moveToEnclosure($animal, $target->id);
+            $transferred = $this->animalRepo->moveToEnclosure($animal, $target->id);
+
+            DomainLogger::alert('Animal transferred', (array) $transferred);
+
+            return $transferred;
         });
     }
 
