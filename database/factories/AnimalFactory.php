@@ -13,8 +13,8 @@ class AnimalFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true),
-            'species' => $this->faker->words(2, true),
+            'name' => implode(' ', $this->faker->words(2)),
+            'species' => implode(' ', $this->faker->words(2)),
             'preferred_environment' => $this->faker->randomElement(['volcanic', 'tundra', 'jungle']), // lowercase to match Enclosure setter
             'enclosure_id' => null,
         ];

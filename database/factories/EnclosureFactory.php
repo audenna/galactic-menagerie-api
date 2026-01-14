@@ -12,7 +12,7 @@ class EnclosureFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true),
+            'name' => implode(' ', $this->faker->words(2)),
             'type' => $this->faker->randomElement(['volcanic', 'tundra', 'jungle']),
             'capacity' => $this->faker->numberBetween(1, 20),
         ];
