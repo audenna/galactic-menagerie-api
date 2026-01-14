@@ -15,10 +15,10 @@ class ValidateNameRule implements ValidationRule
      * @param array|null $extraConditions Extra columns for uniqueness, value can be null to pull from request
      */
     public function __construct(
-        protected int     $maximumCharacters = 50,
-        protected int     $minimumCharacters = 3,
+        protected int $maximumCharacters = 50,
+        protected int $minimumCharacters = 3,
         protected ?string $table = null,
-        protected ?array  $extraConditions = null
+        protected ?array $extraConditions = null
     ) { }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
