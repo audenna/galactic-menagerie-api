@@ -7,41 +7,9 @@ use App\Models\Enclosure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AnimalEnclosureTest extends TestCase
+class AnimalTest extends TestCase
 {
     use RefreshDatabase;
-
-    private string $baseUrl = '/api/v1';
-
-    public function test_it_can_create_an_enclosure(): void
-    {
-        $name = 'Volcanic Dome';
-        $response = $this->postJson("$this->baseUrl/enclosures", [
-            'name' => $name,
-            'type' => 'Volcanic',
-            'capacity' => 5,
-        ]);
-
-        $response->assertCreated()
-            ->assertJsonFragment([
-                'name' => $name,
-                'type' => 'Volcanic',
-                'capacity' => 5,
-            ]);
-
-        $this->assertDatabaseHas('enclosures', ['name' => $name]);
-    }
-
-    public function test_it_rejects_enclosure_with_invalid_capacity(): void
-    {
-        $response = $this->postJson("$this->baseUrl/enclosures", [
-            'name' => 'Tiny Dome',
-            'type' => 'Tundra',
-            'capacity' => 0,
-        ]);
-
-        $response->assertUnprocessable(); // 422
-    }
 
     public function test_it_can_create_an_animal_in_valid_enclosure(): void
     {
@@ -55,8 +23,7 @@ class AnimalEnclosureTest extends TestCase
             'enclosure_id' => $enclosure->id,
         ]);
 
-        $response->assertCreated()
-            ->assertJsonFragment(['name' => $name]);
+        $response->assertCreated()->assertJsonFragment(['name' => $name]);
 
         $this->assertDatabaseHas('animals', ['name' => $name]);
     }
