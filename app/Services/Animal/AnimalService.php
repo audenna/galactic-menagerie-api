@@ -29,7 +29,7 @@ readonly class AnimalService
         DomainLogger::alert("Creating animal...", (array) $dto);
         return DB::transaction(function () use ($dto) {
             /** @var Enclosure $enclosure */
-            $enclosure = $this->enclosureRepo->findOrFail($dto->enclosure_id);
+            $enclosure = $this->enclosureRepo->lockAndFindOrFail($dto->enclosure_id);
 
             $this->assertEnvironmentCompatible($dto->preferred_environment, $enclosure);
             $this->assertEnclosureHasCapacity($enclosure);
