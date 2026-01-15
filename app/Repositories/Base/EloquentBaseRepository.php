@@ -21,7 +21,10 @@ class EloquentBaseRepository implements BaseRepositoryInterface
 
     public function lockAndFindOrFail(int $id): Model
     {
-        return $this->model->whereKey($id)->lockForUpdate()->firstOrFail();
+        return $this->model
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->firstOrFail();
     }
 
     public function all(): Collection
