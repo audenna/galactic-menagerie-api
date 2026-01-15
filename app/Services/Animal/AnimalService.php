@@ -9,16 +9,16 @@ use App\Exceptions\Domain\EnclosureCapacityExceededException;
 use App\Exceptions\Domain\InvalidEnvironmentException;
 use App\Models\Animal;
 use App\Models\Enclosure;
-use App\Repositories\Animal\AnimalRepository;
-use App\Repositories\Enclosure\EnclosureRepository;
+use App\Repositories\Animal\AnimalRepositoryInterface;
+use App\Repositories\Enclosure\EnclosureRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use App\Logging\DomainLogger;
 
 readonly class AnimalService
 {
     public function __construct(
-        private AnimalRepository $animalRepo,
-        private EnclosureRepository $enclosureRepo
+        private AnimalRepositoryInterface $animalRepo,
+        private EnclosureRepositoryInterface $enclosureRepo
     ) {}
 
     /**
