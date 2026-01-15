@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Animal;
 
 use App\Models\Animal;
 use App\Models\Enclosure;
