@@ -5,13 +5,13 @@ namespace App\Services\Enclosure;
 use App\DTOs\Enclosure\CreateEnclosureDTO;
 use App\Exceptions\Domain\InvalidEnclosureCapacityException;
 use App\Models\Enclosure;
-use App\Repositories\Enclosure\EnclosureRepositoryInterface;
+use App\Repositories\Enclosure\EnclosureRepository;
 use App\Logging\DomainLogger;
 
 readonly class EnclosureService
 {
     public function __construct(
-        private EnclosureRepositoryInterface $enclosureRepository,
+        private EnclosureRepository $enclosureRepository,
     ) {}
 
     public function create(CreateEnclosureDTO $dto): Enclosure
