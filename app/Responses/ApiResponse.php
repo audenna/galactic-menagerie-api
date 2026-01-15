@@ -25,10 +25,7 @@ class ApiResponse
         array $errors = [],
     ): JsonResponse
     {
-        $payload = [
-            'success' => false,
-            'message' => $message,
-        ];
+        $payload = ['success' => false, 'message' => $message];
 
         if (!empty($errors)) {
             $payload['errors'] = $errors;
