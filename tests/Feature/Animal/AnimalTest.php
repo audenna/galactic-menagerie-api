@@ -43,7 +43,7 @@ class AnimalTest extends TestCase
             'enclosure_id' => $enclosure->id,
         ]);
 
-        $response->assertUnprocessable()
+        $response->assertConflict()
             ->assertJsonFragment([
                 'message' => 'Animal cannot survive in this enclosure environment.'
             ]);
@@ -67,7 +67,7 @@ class AnimalTest extends TestCase
             'enclosure_id' => $enclosure->id,
         ]);
 
-        $response->assertUnprocessable()
+        $response->assertConflict()
             ->assertJsonFragment([
                 'message' => 'Enclosure has reached its maximum capacity.'
             ]);
@@ -124,7 +124,7 @@ class AnimalTest extends TestCase
             'target_enclosure_id' => $target->id,
         ]);
 
-        $response->assertUnprocessable() // 422
+        $response->assertConflict() // 422
             ->assertJsonFragment([
                 'message' => 'Animal cannot survive in this enclosure environment.'
             ]);
@@ -161,7 +161,7 @@ class AnimalTest extends TestCase
             'target_enclosure_id' => $target->id,
         ]);
 
-        $response->assertUnprocessable() // 422
+        $response->assertConflict() // 422
             ->assertJsonFragment([
                 'message' => 'Enclosure has reached its maximum capacity.'
             ]);
