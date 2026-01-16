@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Enclosure;
 
+use App\Models\Enclosure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,5 +38,17 @@ class EnclosureTest extends TestCase
         ]);
 
         $response->assertUnprocessable(); // 422
+    }
+
+    public function test_it_can_be_deleted(): void
+    {
+        $enclosure = Enclosure::factory()->create();
+
+        $response = $this->deleteJson("$this->baseUrl/enclosures/$enclosure->id");
+
+        $response->assertOk()
+            ->assertJson(['success' => true]);
+
+        $this->assertDatabaseMissing('enclosures', ['id' => $enclosure->id]);
     }
 }

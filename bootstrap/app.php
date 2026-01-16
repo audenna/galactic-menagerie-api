@@ -3,6 +3,7 @@
 use App\Exceptions\Domain\AnimalAlreadyInTargetEnclosureException;
 use App\Exceptions\Domain\EnclosureCapacityExceededException;
 use App\Exceptions\Domain\InvalidEnvironmentException;
+use App\Exceptions\Domain\InvalidResourceIdException;
 use App\Logging\DomainLogger;
 use App\Responses\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -92,7 +93,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             // Validation errors (422)
-            if ($e instanceof ValidationException) {
+            if ($e instanceof ValidationException || $e instanceof InvalidResourceIdException) {
                 $first_error = collect($e->errors())->flatten()->first();
                 DomainLogger::warning('Validation failed', [
                     'error' => $first_error,

@@ -12,6 +12,7 @@ Route::middleware(['api', EnsureAcceptsJson::class, EnsureContentTypeJson::class
 
         Route::prefix('enclosures')->group(function () {
             Route::post('/', [EnclosureController::class, 'store']);
+            Route::delete('/{enclosure_id}', [EnclosureController::class, 'destroy']);
         });
 
         Route::prefix('animals')->group(function () {

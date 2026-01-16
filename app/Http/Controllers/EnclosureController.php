@@ -25,4 +25,15 @@ class EnclosureController extends Controller
             'Enclosure created successfully'
         );
     }
+
+    public function destroy(int|string $enclosure_id): JsonResponse
+    {
+        $this->service->destroy($enclosure_id);
+
+        return ApiResponse::success(
+            null,
+            ResponseAlias::HTTP_OK,
+            'Enclosure deleted successfully'
+        );
+    }
 }

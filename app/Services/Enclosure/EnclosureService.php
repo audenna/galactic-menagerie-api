@@ -4,14 +4,16 @@ namespace App\Services\Enclosure;
 
 use App\DTOs\Enclosure\CreateEnclosureDTO;
 use App\Exceptions\Domain\InvalidEnclosureCapacityException;
+use App\Exceptions\Domain\InvalidResourceIdException;
 use App\Models\Enclosure;
 use App\Logging\DomainLogger;
-use App\Repositories\Enclosure\EnclosureRepositoryInterface;
+use App\Repositories\Enclosure\EnclosureRepository;
+use function PHPUnit\Framework\isNumeric;
 
 readonly class EnclosureService
 {
     public function __construct(
-        private EnclosureRepositoryInterface $enclosureRepository,
+        private EnclosureRepository $enclosureRepository,
     ) {}
 
     public function create(CreateEnclosureDTO $dto): Enclosure
@@ -31,5 +33,16 @@ readonly class EnclosureService
         DomainLogger::alert('Enclosure created', (array) $enclosure);
 
         return $enclosure;
+    }
+
+    public function destroy(int|string $enclosure_id): bool
+    {
+        if (! isNumeric($enclosure_id)) {
+            throw new InvalidResourceIdException();
+        }
+
+        $enclosure = $this->enclosureRepository->findOrFail($enclosure_id);
+
+        return $this->enclosureRepository->delete($enclosure);
     }
 }
