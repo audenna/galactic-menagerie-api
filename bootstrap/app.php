@@ -93,13 +93,14 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Validation errors (422)
             if ($e instanceof ValidationException) {
+                $first_error = collect($e->errors())->flatten()->first();
                 DomainLogger::warning('Validation failed', [
-                    'errors' => $e->errors(),
+                    'error' => $first_error,
                     'path' => $request->path(),
                 ]);
 
                 return ApiResponse::error(
-                    collect($e->errors())->flatten()->first() ?? 'Validation failed',
+                    $first_error ?? 'Validation failed',
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
