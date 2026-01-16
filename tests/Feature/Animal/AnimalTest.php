@@ -43,7 +43,7 @@ class AnimalTest extends TestCase
             'enclosure_id' => $enclosure->id,
         ]);
 
-        $response->assertConflict()
+        $response->assertUnprocessable()
             ->assertJsonFragment([
                 'message' => 'Animal cannot survive in this enclosure environment.'
             ]);
@@ -124,7 +124,7 @@ class AnimalTest extends TestCase
             'target_enclosure_id' => $target->id,
         ]);
 
-        $response->assertConflict() // 422
+        $response->assertUnprocessable() // 422
             ->assertJsonFragment([
                 'message' => 'Animal cannot survive in this enclosure environment.'
             ]);

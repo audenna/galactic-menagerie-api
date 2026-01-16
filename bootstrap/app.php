@@ -48,8 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Domain rule violations (409) Conflicts
             if (
                 $e instanceof EnclosureCapacityExceededException ||
-                $e instanceof AnimalAlreadyInTargetEnclosureException ||
-                $e instanceof InvalidEnvironmentException
+                $e instanceof AnimalAlreadyInTargetEnclosureException
             ) {
                 DomainLogger::warning('Domain rule violation', [
                     'exception' => class_basename($e),
@@ -62,6 +61,20 @@ return Application::configure(basePath: dirname(__DIR__))
                 return ApiResponse::error(
                     $e->getMessage(),
                     Response::HTTP_CONFLICT
+                );
+            }
+
+            if ($e instanceof InvalidEnvironmentException) {
+                DomainLogger::warning('Domain environment violation', [
+                    'exception' => class_basename($e),
+                    'message' => $e->getMessage(),
+                    'path' => $request->path(),
+                    'method' => $request->method(),
+                    'payload' => $request->all(),
+                ]);
+                return ApiResponse::error(
+                    $e->getMessage(),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
 
