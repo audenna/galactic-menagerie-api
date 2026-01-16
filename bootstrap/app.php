@@ -45,7 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
 
-            // Domain rule violations (422)
+            // Domain rule violations (409) Conflicts
             if (
                 $e instanceof EnclosureCapacityExceededException ||
                 $e instanceof AnimalAlreadyInTargetEnclosureException ||
