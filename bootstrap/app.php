@@ -61,7 +61,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 return ApiResponse::error(
                     $e->getMessage(),
-                    Response::HTTP_UNPROCESSABLE_ENTITY
+                    Response::HTTP_CONFLICT
                 );
             }
 

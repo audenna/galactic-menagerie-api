@@ -16,7 +16,7 @@ class EnsureContentTypeJson
         if (in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'])) {
             $contentType = $request->headers->get('Content-Type', '');
 
-            DomainLogger::info("Content type recieved: $contentType");
+            DomainLogger::info("Content type received: $contentType");
 
             if (empty($contentType) || ! str_contains($contentType, 'application/json')) {
                 return ApiResponse::error(

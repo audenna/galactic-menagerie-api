@@ -16,11 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('species');
             $table->string('preferred_environment');
-            $table->foreignId('enclosure_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->foreignId('enclosure_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['name', 'species', 'enclosure_id', 'preferred_environment']);
         });
     }
 
