@@ -28,6 +28,9 @@ class AnimalController extends Controller
         );
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function transfer(TransferAnimalRequest $request, int $animal_id)
     {
         $dto = TransferAnimalDTO::fromRequest($animal_id, $request->validated());
